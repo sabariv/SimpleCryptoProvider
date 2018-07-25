@@ -15,10 +15,10 @@ namespace SimpleCryptoProvider
     public class SimpleCryptoProvider : ISimpleCryptoProvider
     {
         public byte[] Encrypt<T>(string plainText) where T : HashAlgorithm, new()
-        {            
+        {
             if (!string.IsNullOrWhiteSpace(plainText))
             {
-                using(var provider=new T())
+                using (var provider = new T())
                 {
                     byte[] plainData = Encoding.UTF8.GetBytes(plainText);
 
@@ -33,21 +33,17 @@ namespace SimpleCryptoProvider
 
         public string Encrypt<T>(string plainText, bool shouldReturnBase64String) where T : HashAlgorithm, new()
         {
-            if (!string.IsNullOrWhiteSpace(plainText))
+
+            byte[] decipheredData = Encrypt<T>(plainText);
+
+            if (decipheredData != default(byte[]))
             {
-                using (var provider = new T())
-                {
-                    byte[] plainData = Encoding.UTF8.GetBytes(plainText);
-
-                    byte[] decipheredData = provider.ComputeHash(plainData);
-
-                    if (shouldReturnBase64String)
-                        return Convert.ToBase64String(decipheredData);
-                    else
-                        return BitConverter.ToString(decipheredData).Replace(@"-", string.Empty);
-                }
-                
-            }            
+                if (shouldReturnBase64String)
+                    return Convert.ToBase64String(decipheredData);
+                else
+                    return BitConverter.ToString(decipheredData).Replace(@"-", string.Empty);
+            }
+            
             return string.Empty;
         }
 
